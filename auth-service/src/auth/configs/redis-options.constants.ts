@@ -6,9 +6,11 @@ export const RedisOptions: CacheModuleAsyncOptions = {
   isGlobal: true,
   imports: [ConfigModule],
   useFactory: async () => {
-    const store = await redisStore({
-      url: process.env.REDIS_URL,
-    });
+    const options =
+      process.env.MODE === 'prod'
+        ? { url: process.env.REDIS_URL }
+        : { host: 'localhost', port: 6379 };
+    const store = await redisStore(options);
     return {
       store: () => store,
     };
