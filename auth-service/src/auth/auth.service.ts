@@ -4,13 +4,15 @@ import {
   Injectable,
   InternalServerErrorException,
   Logger,
+  NotFoundException,
 } from '@nestjs/common';
 import { SignUpDto } from './dto/sign-up.dto';
-import { User } from './user.entity';
+import { User } from './entity/user.entity';
 import * as bcrypt from 'bcrypt';
 import { randomUUID } from 'crypto';
 import { EmailService } from './services/email/email.service';
 import { CacheService } from './services/cache/cache.service';
+import { UserService } from './services/user/user.service';
 
 @Injectable()
 export class AuthService {
@@ -19,6 +21,7 @@ export class AuthService {
   constructor(
     private cacheService: CacheService,
     private emailSevice: EmailService,
+    private userService: UserService,
   ) {}
 
   async signUp(signUpDto: SignUpDto, _file: Express.Multer.File) {
@@ -34,14 +37,21 @@ export class AuthService {
   async confirmEmail(token: string) {
     const user = await this.cacheService.get(token, true);
     if (!user) {
-      throw new ConflictException('Invalid token');
+      throw new NotFoundException('Not found token');
     }
 
-    //await this.userRepository.save(user);
+    await this.userService.create({
+      bankingDetails: {
+        create: user.bankingDetails,
+      },
+      name: user.name,
+      email: user.email,
+      salt: user.salt,
+      password: user.password,
+      address: user.address,
+    });
 
-    //await this.cacheManager.del(token);
-
-    return { message: 'User confirmed' };
+    return { message: 'User confirmed', user };
   }
 
   private async createUser(
@@ -56,7 +66,6 @@ export class AuthService {
     user.password = await this.hashPassword(signUpDto.password, user.salt);
     user.address = signUpDto.address;
     user.bankingDetails = signUpDto.bankingDetails;
-    user.pictureProfile = _file ? _file.buffer.toString('base64') : '';
     return user;
   }
 

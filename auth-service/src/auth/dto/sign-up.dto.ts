@@ -30,7 +30,7 @@ export class SignUpDto {
 
   @IsNotEmpty()
   bankingDetails: {
-    accounNumber: string;
+    accountNumber: string;
     agency: string;
     balance: number;
   };

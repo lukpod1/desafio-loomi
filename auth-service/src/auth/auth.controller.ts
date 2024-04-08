@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Param,
   Post,
   UploadedFile,
   UseInterceptors,
@@ -21,5 +22,10 @@ export class AuthController {
     @UploadedFile() file: Express.Multer.File,
   ) {
     return this.authService.signUp(signUpDto, file);
+  }
+
+  @Post('confirm/:token')
+  async confim(@Param('token') token: string) {
+    return this.authService.confirmEmail(token);
   }
 }

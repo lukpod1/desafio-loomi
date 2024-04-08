@@ -11,10 +11,8 @@ export class User {
   address: string;
 
   bankingDetails: {
-    accounNumber: string;
+    accountNumber: string;
     agency: string;
     balance: number;
   };
-
-  pictureProfile: string;
 }

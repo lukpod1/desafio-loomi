@@ -1,4 +1,4 @@
-### Request 1
+### /api/auth/signup
 POST http://localhost:3000/api/auth/signup
 Content-Type: application/json
 
@@ -15,6 +15,7 @@ Content-Type: application/json
 }
 
 
-
+### /api/auth/confirm
+POST http://localhost:3000/api/auth/confirm/55d986eb-d963-4fc6-b33f-c69ef5fb4fe9
 
 

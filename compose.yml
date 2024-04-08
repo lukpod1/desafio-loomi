@@ -1,6 +1,21 @@
 version: '3'
 
 services:
+  db:
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: main
+      POSTGRES_USER: main
+      POSTGRES_PASSWORD: main
+  
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - "8080:8080"
+
   main_redis:
     image: redis:alpine
     ports:
