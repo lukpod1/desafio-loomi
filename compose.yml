@@ -1,13 +1,22 @@
 version: '3'
 
 services:
-  redis:
+  main_redis:
     image: redis:alpine
     ports:
       - "6379:6379"
     volumes:
-      - redis:/data
+      - main_redis:/data
+
+  temp_redis:
+    image: redis:alpine
+    ports:
+      - "6380:6380"
+    volumes:
+      - temp_redis:/data
 
 volumes:
-  redis:
+  main_redis:
+    driver: local
+  temp_redis:
     driver: local

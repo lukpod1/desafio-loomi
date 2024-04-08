@@ -1,34 +1,47 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   ConflictException,
-  Inject,
   Injectable,
   InternalServerErrorException,
   Logger,
 } from '@nestjs/common';
 import { SignUpDto } from './dto/sign-up.dto';
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { User } from './user.entity';
 import * as bcrypt from 'bcrypt';
-import { Cache } from 'cache-manager';
 import { randomUUID } from 'crypto';
 import { EmailService } from './services/email/email.service';
+import { CacheService } from './services/cache/cache.service';
 
 @Injectable()
 export class AuthService {
   private logger = new Logger('AuthService');
 
   constructor(
-    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    private cacheService: CacheService,
     private emailSevice: EmailService,
   ) {}
 
   async signUp(signUpDto: SignUpDto, _file: Express.Multer.File) {
     const user = await this.createUser(signUpDto, _file);
 
-    await this.checkIfUserExists(user.id);
-    await this.storeUserInCache(user);
-    await this.sendWelcomeEmail(user);
+    const token = randomUUID();
+
+    await this.checkIfUserExists(token);
+    await this.storeUserInCacheTemp(user, token);
+    await this.sendConfirmationEmail(user, token);
+  }
+
+  async confirmEmail(token: string) {
+    const user = await this.cacheService.get(token, true);
+    if (!user) {
+      throw new ConflictException('Invalid token');
+    }
+
+    //await this.userRepository.save(user);
+
+    //await this.cacheManager.del(token);
+
+    return { message: 'User confirmed' };
   }
 
   private async createUser(
@@ -48,20 +61,22 @@ export class AuthService {
   }
 
   private async checkIfUserExists(userId: string) {
-    const existingUser = await this.cacheManager.get(userId);
+    const existingUser = await this.cacheService.get(userId, true);
     if (existingUser) {
       throw new ConflictException('A user with this id already exists');
     }
   }
 
-  private async storeUserInCache(user: User) {
-    await this.cacheManager.set(user.id, user, 1800);
-    this.logger.log(`User with id ${user.id} has been created in Redis`);
+  private async storeUserInCacheTemp(user: User, token: string) {
+    await this.cacheService.set({ key: token, value: user }, true, 1800);
+    this.logger.log(
+      `User with id ${user.id} and token_confirm ${token} has been created in Redis`,
+    );
   }
 
-  private async sendWelcomeEmail(user: User) {
+  private async sendConfirmationEmail(user: User, token: string) {
     try {
-      await this.emailSevice.sendEmail(user.email, user.id);
+      await this.emailSevice.sendEmail(user.email, token);
     } catch (error) {
       throw new InternalServerErrorException();
     }

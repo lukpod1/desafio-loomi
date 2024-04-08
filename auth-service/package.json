@@ -25,6 +25,7 @@
     "@nestjs/config": "^3.2.2",
     "@nestjs/core": "^10.0.0",
     "@nestjs/platform-express": "^10.0.0",
+    "aws-sdk": "^2.1595.0",
     "bcrypt": "^5.1.1",
     "cache-manager": "^5.5.1",
     "cache-manager-redis-store": "^3.0.1",
