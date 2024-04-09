@@ -20,15 +20,20 @@ export class UserService {
   }
 
   async updateUserDetails(userId: string, updateData: Partial<User>) {
-    // const user = await this.getUserDetails(userId);
-    // if (!user) {
-    //   throw new Error('User not found');
-    // }
+    const user = await this.getUserDetails(userId);
+    if (!user) {
+      throw new Error('User not found');
+    }
 
-    // return await this.prisma.user.update({
-    //   where: { id: userId },
-    //   data: { ...user, ...updateData },
-    // });
-    return `User details updated successfully ${userId} with ${updateData}`;
+    return await this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        ...updateData,
+        updatedAt: new Date(),
+      },
+      include: {
+        bankingDetails: true,
+      },
+    });
   }
 }
