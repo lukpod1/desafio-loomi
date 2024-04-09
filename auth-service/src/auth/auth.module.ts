@@ -7,6 +7,7 @@ import { SESProvider } from './services/email/ses.provider';
 import { CacheService } from './services/cache/cache.service';
 import { UserService } from './services/user/user.service';
 import { PrismaService } from './services/prisma/prisma.service';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
   imports: [ConfigModule.forRoot()],
@@ -18,6 +19,7 @@ import { PrismaService } from './services/prisma/prisma.service';
     SESProvider,
     UserService,
     PrismaService,
+    JwtService,
   ],
 })
 export class AuthModule {}

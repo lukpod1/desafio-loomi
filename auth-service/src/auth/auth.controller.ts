@@ -10,6 +10,7 @@ import {
 import { SignUpDto } from './dto/sign-up.dto';
 import { AuthService } from './auth.service';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { SignInDto } from './dto/signin.dto';
 
 @Controller('api/auth')
 export class AuthController {
@@ -27,5 +28,10 @@ export class AuthController {
   @Post('confirm/:token')
   async confim(@Param('token') token: string) {
     return this.authService.confirmEmail(token);
+  }
+
+  @Post('signin')
+  async signIn(@Body(ValidationPipe) signInDto: SignInDto) {
+    return this.authService.signIn(signInDto);
   }
 }

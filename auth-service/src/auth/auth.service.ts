@@ -13,6 +13,8 @@ import { randomUUID } from 'crypto';
 import { EmailService } from './services/email/email.service';
 import { CacheService } from './services/cache/cache.service';
 import { UserService } from './services/user/user.service';
+import { SignInDto } from './dto/signin.dto';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
@@ -22,6 +24,7 @@ export class AuthService {
     private cacheService: CacheService,
     private emailSevice: EmailService,
     private userService: UserService,
+    private jwtService: JwtService,
   ) {}
 
   async signUp(signUpDto: SignUpDto, _file: Express.Multer.File) {
@@ -52,6 +55,20 @@ export class AuthService {
     });
 
     return { message: 'User confirmed', user };
+  }
+
+  async signIn(signInDto: SignInDto): Promise<{ accessToken: string }> {
+    const user = await this.userService.validateUserPassword(signInDto);
+
+    const payload = { email: user.email };
+    const accessToken = await this.jwtService.sign(payload, {
+      secret: process.env.JWT_SECRET,
+      expiresIn: '1d',
+    });
+    this.logger.debug(
+      `Generated JWT Token with payload ${JSON.stringify(payload)}`,
+    );
+    return { accessToken };
   }
 
   private async createUser(

@@ -16,6 +16,14 @@ Content-Type: application/json
 
 
 ### /api/auth/confirm
-POST http://localhost:3000/api/auth/confirm/55d986eb-d963-4fc6-b33f-c69ef5fb4fe9
+POST http://localhost:3000/api/auth/confirm/08b24d3a-83a4-4151-af61-92d9470e41c1
 
 
+### /api/auth/signin
+POST http://localhost:3000/api/auth/signin
+Content-Type: application/json
+
+{
+  "email": "lukasalvespod1@gmail.com",
+  "password": "Password123"
+}
