@@ -1,0 +1,29 @@
+### /api/users/:id}
+GET http://localhost:3001/api/users/clurrq9x40002114ueny67iyh
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imx1a2FzYWx2ZXNwb2QxQGdtYWlsLmNvbSIsImlhdCI6MTcxMjY3MzUwNiwiZXhwIjoxNzEyNzU5OTA2fQ.-FSWr3MdMkMz9gA4lIbagJ_fk0JORg19pMKpv91TgPw
+# {
+#   "name": "John Doe",
+#   "email": "lukasalvespod1@gmail.com",
+#   "password": "Password123",
+#   "address": "123 Main St",
+#   "bankingDetails": {
+#     "accountNumber": "1234567890",
+#     "agency": "ABC123",
+#     "balance": 1000
+#   }
+# }
+
+
+### /api/auth/confirm
+POST http://localhost:3000/api/auth/confirm/08b24d3a-83a4-4151-af61-92d9470e41c1
+
+
+### /api/auth/signin
+POST http://localhost:3000/api/auth/signin
+Content-Type: application/json
+
+{
+  "email": "lukasalvespod1@gmail.com",
+  "password": "Password123"
+}

@@ -1,14 +1,23 @@
-import { Body, Controller, Get, Param, UploadedFile } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  UploadedFile,
+  UseGuards,
+} from '@nestjs/common';
 import { Patch } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { UserService } from './user.service';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('api/users')
+@UseGuards(AuthGuard())
 export class UserController {
   constructor(private userSevice: UserService) {}
 
   @Get(':userId')
-  getUserDetails(@Param('userId') userId: string) {
+  getUserDetails(@Param('userId') userId: string): Promise<User> {
     return this.userSevice.getUserDetails(userId);
   }
 
@@ -17,19 +26,7 @@ export class UserController {
     @Param('userId') userId: string,
     @Body() updateData: Partial<User>,
   ) {
-    // // Validate the received parameters
-    // // ...
-
-    // // Fetch user details from cache
-    // const userDetails = await this.userService.getUserDetails(userId);
-
-    // // Merge existing user data with the new data provided in the request
-    // const updatedUser = { ...userDetails, ...updateData };
-
-    // // Update the specified fields in the database and Redis
-    // await this.userService.updateUser(userId, updatedUser);
-
-    return `Update successful ${userId} with ${JSON.stringify(updateData)}`;
+    return this.userSevice.updateUserDetails(userId, updateData);
   }
 
   @Patch(':userId/profile-picture')
