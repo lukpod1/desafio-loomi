@@ -5,11 +5,13 @@ import {
   Param,
   UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { Patch } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { UserService } from './user.service';
 import { AuthGuard } from '@nestjs/passport';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('api/users')
 @UseGuards(AuthGuard())
@@ -30,16 +32,11 @@ export class UserController {
   }
 
   @Patch(':userId/profile-picture')
+  @UseInterceptors(FileInterceptor('file'))
   async updateProfilePicture(
     @Param('userId') userId: string,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    // // Validate the received parameters
-    // // ...
-    // // Perform the upload of the received image to a cloud storage service (e.g., Amazon S3)
-    // const imageUrl = await this.imageService.uploadImage(file);
-    // // Update the user's profile picture URL in the database and Redis
-    // await this.userService.updateProfilePicture(userId, imageUrl);
-    return `Profile picture updated successfully ${userId} with ${file.filename}`;
+    return this.userSevice.updateProfilePicture(userId, file);
   }
 }

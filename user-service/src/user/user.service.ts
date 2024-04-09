@@ -1,10 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { S3Service } from 'src/s3/s3.service';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly s3Service: S3Service,
+  ) {}
 
   async getUserDetails(userId: string) {
     return await this.prisma.user.findUnique({
@@ -34,6 +38,18 @@ export class UserService {
       include: {
         bankingDetails: true,
       },
+    });
+  }
+
+  async updateProfilePicture(userId: string, file: Express.Multer.File) {
+    const user = await this.getUserDetails(userId);
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    const response = await this.s3Service.uploadFile(file);
+    return await this.updateUserDetails(userId, {
+      profilePicture: response.Location,
     });
   }
 }
