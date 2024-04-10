@@ -19,10 +19,16 @@ model Transaction {
   description    String
   senderUserId   String
   receiverUserId String
+  status         STATUS   @default(PENDING)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
   sender         User     @relation("Sender", fields: [senderUserId], references: [id])
   receiver       User     @relation("Receiver", fields: [receiverUserId], references: [id])
+}
+
+enum STATUS {
+  PENDING
+  COMPLETED
 }
 
 model User {

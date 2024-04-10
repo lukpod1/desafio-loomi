@@ -12,6 +12,7 @@ import { User } from '@prisma/client';
 import { UserService } from './user.service';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { MessagePattern, Payload } from '@nestjs/microservices';
 
 @Controller('api/users')
 @UseGuards(AuthGuard())
@@ -38,5 +39,10 @@ export class UserController {
     @UploadedFile() file: Express.Multer.File,
   ) {
     return this.userSevice.updateProfilePicture(userId, file);
+  }
+
+  @MessagePattern('transactions')
+  async transactions(@Payload() message) {
+    await this.userSevice.transferAmount(message);
   }
 }
